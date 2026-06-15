@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  LayoutDashboard, ArrowLeftRight, Wallet, BarChart3, LogOut, UserCircle, Target,
+  LayoutDashboard, ArrowLeftRight, Wallet, BarChart3, LogOut, UserCircle, Target, Sparkles,
 } from 'lucide-react';
 
 const navItems = [
@@ -9,11 +9,12 @@ const navItems = [
   { to: '/transactions', label: 'Transaksi', icon: ArrowLeftRight },
   { to: '/budgets', label: 'Anggaran', icon: Wallet },
   { to: '/savings', label: 'Tabungan', icon: Target },
+  { to: '/insights', label: 'Insight', icon: Sparkles },
   { to: '/reports', label: 'Laporan', icon: BarChart3 },
 ];
 
 // Items shown in bottom nav (max 5 for good UX)
-const bottomNavItems = navItems;
+const bottomNavItems = navItems.filter(i => i.to !== '/reports');
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -24,6 +25,7 @@ export default function Layout({ children }) {
     '/transactions': 'Transaksi',
     '/categories': 'Kategori',
     '/savings': 'Tabungan',
+    '/insights': 'Insight',
     '/reports': 'Laporan',
   };
 
@@ -31,18 +33,18 @@ export default function Layout({ children }) {
 
   const SidebarContent = ({ onItemClick }) => (
     <>
-      <div className="p-6 border-b border-gray-100">
+      <div className="p-5 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-500/20">
             C
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-800">Catatan Keuangan</h1>
-            <p className="text-xs text-gray-400">Personal Finance</p>
+            <h1 className="text-base font-bold text-gray-800 tracking-tight">Catatan Keuangan</h1>
+            <p className="text-[11px] text-gray-400">Personal Finance Tracker</p>
           </div>
         </div>
       </div>
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 px-3 space-y-0.5">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
@@ -50,34 +52,44 @@ export default function Layout({ children }) {
             end={item.to === '/'}
             onClick={onItemClick}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+              `relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700 shadow-sm'
+                  ? 'bg-blue-50 text-blue-700 font-semibold'
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
               }`
             }
           >
-            <item.icon size={20} />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-blue-600 rounded-r-full" />
+                )}
+                <item.icon size={19} strokeWidth={isActive ? 2.2 : 1.8} />
+                <span>{item.label}</span>
+                {item.to === '/insights' && !isActive && (
+                  <span className="ml-auto text-[9px] font-bold bg-gradient-to-r from-amber-400 to-orange-500 text-white px-1.5 py-0.5 rounded-full">NEW</span>
+                )}
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
       {/* User section at bottom */}
-      <div className="p-4 border-t border-gray-100">
-        <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-xl">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+      <div className="p-3 border-t border-gray-100">
+        <div className="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-100/50">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm shadow-blue-500/20">
             {user?.name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-700 truncate">{user?.name}</p>
-            <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+            <p className="text-[13px] font-medium text-gray-700 truncate">{user?.name}</p>
+            <p className="text-[11px] text-gray-400 truncate">{user?.email}</p>
           </div>
           <button
             onClick={logout}
             className="p-2 hover:bg-red-50 rounded-lg transition-colors group"
             title="Keluar"
           >
-            <LogOut size={18} className="text-gray-400 group-hover:text-red-500" />
+            <LogOut size={16} className="text-gray-300 group-hover:text-red-500" />
           </button>
         </div>
       </div>

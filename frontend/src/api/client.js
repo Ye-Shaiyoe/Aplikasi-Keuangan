@@ -68,6 +68,12 @@ export const deleteTransaction = (id) =>
 export const getSummary = (month, year) =>
   api.get('/reports/summary', { params: { month, year } }).then((r) => r.data);
 
+export const getYearlyTrend = (year) =>
+  api.get('/reports/yearly-trend', { params: { year } }).then((r) => r.data);
+
+export const getCategoryTrend = (month, year) =>
+  api.get('/reports/category-trend', { params: { month, year } }).then((r) => r.data);
+
 // Savings Goals
 export const getSavingsGoals = () =>
   api.get('/savings-goals').then((r) => r.data);
