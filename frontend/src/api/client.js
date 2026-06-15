@@ -87,4 +87,17 @@ export const depositToSavingsGoal = (id, amount) =>
 export const withdrawFromSavingsGoal = (id, amount) =>
   api.post(`/savings-goals/${id}/withdraw`, { amount }).then((r) => r.data);
 
+// Budgets
+export const getBudgets = (month, year) =>
+  api.get('/budgets', { params: { month, year } }).then((r) => r.data);
+
+export const getBudgetSummary = (month, year) =>
+  api.get('/budgets/summary', { params: { month, year } }).then((r) => r.data);
+
+export const upsertBudget = (data) =>
+  api.post('/budgets', data).then((r) => r.data);
+
+export const deleteBudget = (id) =>
+  api.delete(`/budgets/${id}`).then((r) => r.data);
+
 export default api;

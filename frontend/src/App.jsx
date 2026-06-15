@@ -8,6 +8,7 @@ import Transactions from './pages/Transactions';
 import Categories from './pages/Categories';
 import Reports from './pages/Reports';
 import SavingsGoals from './pages/SavingsGoals';
+import Budgets from './pages/Budgets';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,7 @@ function AppRoutes() {
       <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       <Route path="/savings" element={<ProtectedRoute><SavingsGoals /></ProtectedRoute>} />
+      <Route path="/budgets" element={<ProtectedRoute><Budgets /></ProtectedRoute>} />
     </Routes>
   );
 }

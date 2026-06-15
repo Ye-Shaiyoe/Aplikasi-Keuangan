@@ -49,12 +49,28 @@ export default function Dashboard() {
   const formatCurrency = (val) =>
     new Intl.NumberFormat('id-ID').format(val || 0);
 
+  const formatCompact = (val) => {
+    if (val >= 1000000) return `${(val / 1000000).toFixed(val % 1000000 === 0 ? 0 : 1)}jt`;
+    if (val >= 1000) return `${(val / 1000).toFixed(0)}rb`;
+    return new Intl.NumberFormat('id-ID').format(val);
+  };
+
+  const monthName = new Date().toLocaleString('id', { month: 'long' });
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+    <div className="space-y-5 sm:space-y-6">
+      {/* Header - mobile has greeting, desktop has title */}
+      <div className="hidden sm:block">
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+      </div>
+
+      {/* Mobile greeting */}
+      <div className="sm:hidden">
+        <p className="text-gray-400 text-sm">Ringkasan {monthName}</p>
+      </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
         <StatCard
           title="Saldo"
           value={summary?.balance || 0}
@@ -62,25 +78,48 @@ export default function Dashboard() {
           color="blue"
         />
         <StatCard
-          title="Pemasukan"
+          title="Masuk"
           value={summary?.total_income || 0}
           icon={ArrowUpCircle}
           color="green"
         />
         <StatCard
-          title="Pengeluaran"
+          title="Keluar"
           value={summary?.total_expense || 0}
           icon={ArrowDownCircle}
           color="red"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Mobile: Full-width stacked / Desktop: Side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Pie Chart */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Pengeluaran per Kategori</h2>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Pengeluaran per Kategori</h2>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={200} className="sm:hidden">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={45}
+                  outerRadius={75}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
+                  {pieData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [`Rp ${formatCurrency(value)}`, 'Total']}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : null}
+          {pieData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280} className="hidden sm:block">
               <PieChart>
                 <Pie
                   data={pieData}
@@ -101,54 +140,67 @@ export default function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-center py-12">
+            <p className="text-gray-400 text-center py-8 sm:py-12 text-sm">
               Belum ada data pengeluaran bulan ini
             </p>
           )}
-          {/* Legend */}
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {pieData.map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm">
-                <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span className="text-gray-600 truncate">{item.name}</span>
-              </div>
-            ))}
-          </div>
+          {/* Legend - compact on mobile */}
+          {pieData.length > 0 && (
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 sm:gap-2 mt-3 sm:mt-4">
+              {pieData.map((item, i) => (
+                <div key={i} className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                  <div
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-gray-600 truncate flex-1">{item.name}</span>
+                  <span className="text-gray-400 text-[10px] sm:text-xs hidden sm:inline">
+                    Rp {formatCompact(item.value)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Transaksi Terbaru</h2>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Transaksi Terbaru</h2>
           {recent.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {recent.map((t) => (
                 <div key={t.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                     <div
-                      className={`w-2 h-2 rounded-full ${t.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`}
-                    />
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        t.type === 'income' ? 'bg-green-50' : 'bg-red-50'
+                      }`}
+                    >
+                      {t.type === 'income' ? (
+                        <ArrowUpCircle size={18} className="text-green-500" />
+                      ) : (
+                        <ArrowDownCircle size={18} className="text-red-500" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-700 truncate">
                         {t.description || t.category_name}
                       </p>
-                      <p className="text-xs text-gray-400">{t.category_name}</p>
+                      <p className="text-[11px] sm:text-xs text-gray-400 truncate">{t.category_name} · {new Date(t.date + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
                     </div>
                   </div>
                   <span
-                    className={`text-sm font-semibold ${
+                    className={`text-sm font-semibold shrink-0 ml-2 ${
                       t.type === 'income' ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
-                    {t.type === 'income' ? '+' : '-'}Rp {formatCurrency(t.amount)}
+                    {t.type === 'income' ? '+' : '-'}<span className="sm:hidden">{formatCompact(t.amount)}</span><span className="hidden sm:inline">{formatCurrency(t.amount)}</span>
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-center py-12">
+            <p className="text-gray-400 text-center py-8 sm:py-12 text-sm">
               Belum ada transaksi bulan ini
             </p>
           )}

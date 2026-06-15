@@ -54,10 +54,39 @@ export default function Categories() {
   const incomeCats = categories.filter((c) => c.type === 'income');
   const expenseCats = categories.filter((c) => c.type === 'expense');
 
-  const CategoryGrid = ({ items, title }) => (
+  // Mobile: list style / Desktop: grid style
+  const CategorySection = ({ items, title, titleColor }) => (
     <div>
-      <h3 className="text-sm font-medium text-gray-500 mb-3 uppercase tracking-wider">{title}</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <h3 className={`text-xs sm:text-sm font-semibold uppercase tracking-wider mb-3 ${titleColor}`}>{title}</h3>
+      
+      {/* Mobile: List view */}
+      <div className="sm:hidden space-y-2">
+        {items.map((c) => (
+          <div key={c.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-center gap-3 active:bg-gray-50 transition-colors">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm"
+              style={{ backgroundColor: c.color }}
+            >
+              {c.name.charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-700">{c.name}</p>
+              <p className="text-xs text-gray-400 capitalize">{c.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <button onClick={() => openEdit(c)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <Pencil size={16} className="text-gray-400" />
+              </button>
+              <button onClick={() => handleDelete(c.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors">
+                <Trash2 size={16} className="text-red-400" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: Grid view */}
+      <div className="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {items.map((c) => (
           <div key={c.id} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
             <div className="flex flex-col items-center text-center gap-2">
@@ -84,15 +113,16 @@ export default function Categories() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">Kategori</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Kategori</h1>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="flex items-center gap-2 bg-blue-600 text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium"
         >
           <Plus size={18} />
-          Tambah Kategori
+          <span className="sm:hidden">Baru</span>
+          <span className="hidden sm:inline">Tambah Kategori</span>
         </button>
       </div>
 
@@ -101,9 +131,9 @@ export default function Categories() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         </div>
       ) : (
-        <div className="space-y-8">
-          <CategoryGrid items={expenseCats} title="Pengeluaran" />
-          <CategoryGrid items={incomeCats} title="Pemasukan" />
+        <div className="space-y-6 sm:space-y-8">
+          <CategorySection items={expenseCats} title="Pengeluaran" titleColor="text-red-500" />
+          <CategorySection items={incomeCats} title="Pemasukan" titleColor="text-green-500" />
         </div>
       )}
 
@@ -119,31 +149,47 @@ export default function Categories() {
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Nama kategori"
               required
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Tipe</label>
-            <select
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="expense">Pengeluaran</option>
-              <option value="income">Pemasukan</option>
-            </select>
+            <div className="flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, type: 'expense' })}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all ${
+                  form.type === 'expense'
+                    ? 'bg-red-50 border-red-200 text-red-700 shadow-sm'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                Pengeluaran
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, type: 'income' })}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all ${
+                  form.type === 'income'
+                    ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                Pemasukan
+              </button>
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Warna</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">Warna</label>
             <div className="flex flex-wrap gap-2">
               {defaultColors.map((color) => (
                 <button
                   key={color}
                   type="button"
                   onClick={() => setForm({ ...form, color })}
-                  className={`w-8 h-8 rounded-full transition-all ${
+                  className={`w-9 h-9 sm:w-8 sm:h-8 rounded-full transition-all ${
                     form.color === color ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : ''
                   }`}
                   style={{ backgroundColor: color }}
@@ -153,9 +199,9 @@ export default function Categories() {
           </div>
           <button
             onClick={handleSave}
-            className="w-full bg-blue-600 text-white py-2.5 rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-colors text-sm font-semibold"
           >
-            {editItem ? 'Simpan' : 'Tambah'}
+            {editItem ? 'Simpan Perubahan' : 'Tambah Kategori'}
           </button>
         </div>
       </Modal>

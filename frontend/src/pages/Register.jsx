@@ -68,19 +68,20 @@ export default function Register() {
       </div>
 
       {/* Right Panel - Register Form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
+          <div className="lg:hidden flex items-center gap-2 mb-6 sm:mb-8 justify-center">
             <div className="p-2 bg-emerald-600 rounded-xl text-white">
-              <Wallet size={28} />
+              <Wallet size={24} className="sm:hidden" />
+              <Wallet size={28} className="hidden sm:block" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Catatan Keuangan</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Catatan Keuangan</h1>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Buat akun baru</h2>
-            <p className="text-gray-500 mb-8">Daftar gratis untuk memulai</p>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">Buat akun baru</h2>
+            <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8">Daftar gratis untuk memulai</p>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
