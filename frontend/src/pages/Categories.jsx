@@ -62,7 +62,7 @@ export default function Categories() {
       {/* Mobile: List view */}
       <div className="sm:hidden space-y-2">
         {items.map((c) => (
-          <div key={c.id} className="bg-white rounded-xl border border-gray-100 p-3 flex items-center gap-3 active:bg-gray-50 transition-colors">
+          <div key={c.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-3 flex items-center gap-3 active:bg-gray-50 dark:active:bg-gray-700 transition-colors">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm"
               style={{ backgroundColor: c.color }}
@@ -70,14 +70,14 @@ export default function Categories() {
               {c.name.charAt(0)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-700">{c.name}</p>
-              <p className="text-xs text-gray-400 capitalize">{c.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{c.name}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 capitalize">{c.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              <button onClick={() => openEdit(c)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Pencil size={16} className="text-gray-400" />
+              <button onClick={() => openEdit(c)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <Pencil size={16} className="text-gray-400 dark:text-gray-500" />
               </button>
-              <button onClick={() => handleDelete(c.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors">
+              <button onClick={() => handleDelete(c.id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">
                 <Trash2 size={16} className="text-red-400" />
               </button>
             </div>
@@ -88,7 +88,7 @@ export default function Categories() {
       {/* Desktop: Grid view */}
       <div className="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {items.map((c) => (
-          <div key={c.id} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
+          <div key={c.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
             <div className="flex flex-col items-center text-center gap-2">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
@@ -96,12 +96,12 @@ export default function Categories() {
               >
                 {c.name.charAt(0)}
               </div>
-              <p className="text-sm font-medium text-gray-700">{c.name}</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{c.name}</p>
               <div className="flex gap-1">
-                <button onClick={() => openEdit(c)} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Pencil size={14} className="text-gray-400" />
+                <button onClick={() => openEdit(c)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                  <Pencil size={14} className="text-gray-400 dark:text-gray-500" />
                 </button>
-                <button onClick={() => handleDelete(c.id)} className="p-1 hover:bg-red-50 rounded-lg transition-colors">
+                <button onClick={() => handleDelete(c.id)} className="p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">
                   <Trash2 size={14} className="text-red-400" />
                 </button>
               </div>
@@ -115,7 +115,7 @@ export default function Categories() {
   return (
     <div className="space-y-5 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Kategori</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Kategori</h1>
         <button
           onClick={openAdd}
           className="flex items-center gap-2 bg-blue-600 text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -144,26 +144,26 @@ export default function Categories() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Nama</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Nama</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 dark:text-gray-100"
               placeholder="Nama kategori"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Tipe</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Tipe</label>
             <div className="flex gap-2.5">
               <button
                 type="button"
                 onClick={() => setForm({ ...form, type: 'expense' })}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all ${
                   form.type === 'expense'
-                    ? 'bg-red-50 border-red-200 text-red-700 shadow-sm'
-                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                    ? 'bg-red-50 border-red-200 text-red-700 shadow-sm dark:bg-red-900/30 dark:border-red-800 dark:text-red-400'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
                 }`}
               >
                 Pengeluaran
@@ -173,8 +173,8 @@ export default function Categories() {
                 onClick={() => setForm({ ...form, type: 'income' })}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all ${
                   form.type === 'income'
-                    ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
-                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                    ? 'bg-green-50 border-green-200 text-green-700 shadow-sm dark:bg-green-900/30 dark:border-green-800 dark:text-green-400'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
                 }`}
               >
                 Pemasukan
@@ -182,7 +182,7 @@ export default function Categories() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Warna</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Warna</label>
             <div className="flex flex-wrap gap-2">
               {defaultColors.map((color) => (
                 <button

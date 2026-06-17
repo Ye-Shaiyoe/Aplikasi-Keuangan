@@ -68,7 +68,7 @@ export default function Register() {
       </div>
 
       {/* Right Panel - Register Form */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-6 sm:mb-8 justify-center">
@@ -76,12 +76,12 @@ export default function Register() {
               <Wallet size={24} className="sm:hidden" />
               <Wallet size={28} className="hidden sm:block" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Catatan Keuangan</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Catatan Keuangan</h1>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">Buat akun baru</h2>
-            <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8">Daftar gratis untuk memulai</p>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-8 transition-colors">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">Buat akun baru</h2>
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-6 sm:mb-8">Daftar gratis untuk memulai</p>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
@@ -91,14 +91,14 @@ export default function Register() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nama Lengkap</label>
                 <div className="relative">
                   <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-200 dark:border-gray-600 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-100"
                     placeholder="Nama lengkap"
                     required
                     minLength={2}
@@ -107,14 +107,14 @@ export default function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
                 <div className="relative">
                   <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-200 dark:border-gray-600 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-100"
                     placeholder="nama@email.com"
                     required
                   />
@@ -122,14 +122,14 @@ export default function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl pl-11 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-200 dark:border-gray-600 rounded-xl pl-11 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-100"
                     placeholder="Minimal 6 karakter"
                     required
                     minLength={6}
@@ -145,14 +145,14 @@ export default function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Konfirmasi Password</label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border border-gray-200 dark:border-gray-600 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-100"
                     placeholder="Ulangi password"
                     required
                   />
@@ -169,7 +169,7 @@ export default function Register() {
             </form>
           </div>
 
-          <p className="text-center mt-6 text-sm text-gray-500">
+          <p className="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
             Sudah punya akun?{' '}
             <Link to="/login" className="text-blue-600 font-medium hover:text-blue-700">
               Masuk di sini

@@ -21,13 +21,13 @@ function formatCompact(n) {
 function CashFlowTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white/95 backdrop-blur-xl rounded-xl shadow-xl border border-gray-100 p-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-1.5">{label}</p>
+    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-3 text-sm">
+      <p className="font-semibold text-gray-700 dark:text-gray-200 mb-1.5">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2 py-0.5">
           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-          <span className="text-gray-500">{entry.name}:</span>
-          <span className="font-semibold text-gray-800">Rp {formatRupiah(entry.value)}</span>
+          <span className="text-gray-500 dark:text-gray-400">{entry.name}:</span>
+          <span className="font-semibold text-gray-800 dark:text-gray-100">Rp {formatRupiah(entry.value)}</span>
         </div>
       ))}
     </div>
@@ -81,12 +81,12 @@ export default function Reports() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Laporan</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Laporan</h1>
         <div className="flex gap-2.5 sm:gap-3">
           <select
             value={month}
             onChange={(e) => setMonth(parseInt(e.target.value))}
-            className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex-1 sm:flex-none"
+            className="border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 dark:text-gray-200 flex-1 sm:flex-none"
           >
             {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
               <option key={m} value={m}>{new Date(2000, m - 1).toLocaleString('id', { month: 'long' })}</option>
@@ -95,7 +95,7 @@ export default function Reports() {
           <select
             value={year}
             onChange={(e) => setYear(parseInt(e.target.value))}
-            className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex-1 sm:flex-none"
+            className="border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 dark:text-gray-200 flex-1 sm:flex-none"
           >
             {[year - 2, year - 1, year, year + 1].map((y) => (
               <option key={y} value={y}>{y}</option>
@@ -128,7 +128,7 @@ export default function Reports() {
 
       {/* Cash Flow Chart */}
       <Card>
-        <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Cash Flow {year}</h2>
+        <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Cash Flow {year}</h2>
         {(() => {
           let cumulative = 0;
           const cfData = yearlyTrend?.months?.map((m) => {
@@ -136,14 +136,14 @@ export default function Reports() {
             return { name: MONTH_NAMES[m.month - 1], Pemasukan: m.income, Pengeluaran: m.expense, 'Cash Flow': cumulative };
           }) || [];
           if (!cfData.some(d => d.Pemasukan > 0 || d.Pengeluaran > 0)) {
-            return <p className="text-gray-400 text-center py-8 sm:py-12 text-sm">Tidak ada data cash flow</p>;
+            return <p className="text-gray-400 dark:text-gray-500 text-center py-8 sm:py-12 text-sm">Tidak ada data cash flow</p>;
           }
           return (
             <>
               <div className="flex items-center gap-3 text-xs mb-3">
-                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-green-400" /> Masuk</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-red-400" /> Keluar</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-1.5 rounded-full bg-indigo-500" /> Akumulasi</span>
+                <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-green-400" /> Masuk</span>
+                <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-red-400" /> Keluar</span>
+                <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-1.5 rounded-full bg-indigo-500" /> Akumulasi</span>
               </div>
               <ResponsiveContainer width="100%" height={220} className="sm:hidden">
                 <ComposedChart data={cfData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
@@ -190,7 +190,7 @@ export default function Reports() {
       <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {/* Expense Pie Chart */}
         <Card>
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Pengeluaran per Kategori</h2>
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Pengeluaran per Kategori</h2>
           {expensePie.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height={220} className="sm:hidden">
@@ -217,9 +217,9 @@ export default function Reports() {
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                      <span className="text-xs text-gray-600 truncate">{item.name}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-300 truncate">{item.name}</span>
                     </div>
-                    <span className="text-xs font-medium text-gray-700 ml-2 shrink-0">Rp {formatCompact(item.value)}</span>
+                    <span className="text-xs font-medium text-gray-700 dark:text-gray-200 ml-2 shrink-0">Rp {formatCompact(item.value)}</span>
                   </div>
                 ))}
               </div>
@@ -243,13 +243,13 @@ export default function Reports() {
               </ResponsiveContainer>
             </>
           ) : (
-            <p className="text-gray-400 text-center py-8 sm:py-12 text-sm">Tidak ada data pengeluaran</p>
+            <p className="text-gray-400 dark:text-gray-500 text-center py-8 sm:py-12 text-sm">Tidak ada data pengeluaran</p>
           )}
         </Card>
 
         {/* Bar Chart */}
         <Card>
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Perbandingan per Kategori</h2>
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Perbandingan per Kategori</h2>
           {barData.length > 0 ? (
             <ResponsiveContainer width="100%" height={220} className="sm:hidden">
               <BarChart data={barData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
@@ -272,26 +272,26 @@ export default function Reports() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-center py-8 sm:py-12 text-sm">Tidak ada data</p>
+            <p className="text-gray-400 dark:text-gray-500 text-center py-8 sm:py-12 text-sm">Tidak ada data</p>
           )}
         </Card>
       </div>
 
       {/* Detail by Category - Mobile cards, Desktop table */}
       <Card>
-        <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Detail per Kategori</h2>
+        <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">Detail per Kategori</h2>
         {summary?.by_category?.length > 0 ? (
           <>
             {/* Mobile: Card list */}
             <div className="sm:hidden space-y-2">
               {summary.by_category.map((c) => (
-                <div key={c.category_id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                <div key={c.category_id} className="flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-gray-700 last:border-0">
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: c.category_color + '15' }}>
                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.category_color }} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-700 truncate">{c.category_name}</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{c.category_name}</p>
                       <p className="text-xs text-gray-400">{c.count} transaksi</p>
                     </div>
                   </div>
@@ -316,11 +316,11 @@ export default function Reports() {
                 </thead>
                 <tbody>
                   {summary.by_category.map((c) => (
-                    <tr key={c.category_id} className="border-b border-gray-50">
+                    <tr key={c.category_id} className="border-b border-gray-50 dark:border-gray-700">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: c.category_color }} />
-                          <span className="text-gray-700">{c.category_name}</span>
+                          <span className="text-gray-700 dark:text-gray-200">{c.category_name}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-right text-gray-600">{c.count}</td>
@@ -336,7 +336,7 @@ export default function Reports() {
             </div>
           </>
         ) : (
-          <p className="text-gray-400 text-center py-8 text-sm">Belum ada data bulan ini</p>
+          <p className="text-gray-400 dark:text-gray-500 text-center py-8 text-sm">Belum ada data bulan ini</p>
         )}
       </Card>
     </div>

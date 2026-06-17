@@ -12,6 +12,12 @@ body {
     'Ubuntu', 'Cantarell', sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-overflow-scrolling: touch;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background-color: #111827;
+  color: #f3f4f6;
 }
 
 /* Safe area for iPhone notch/home indicator */

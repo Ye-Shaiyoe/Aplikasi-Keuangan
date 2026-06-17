@@ -49,13 +49,13 @@ function MiniSparkline({ data, color }) {
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white/95 backdrop-blur-xl rounded-xl shadow-xl border border-gray-100 p-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-1.5">{label}</p>
+    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-3 text-sm">
+      <p className="font-semibold text-gray-700 dark:text-gray-200 mb-1.5">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2 py-0.5">
           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-          <span className="text-gray-500">{entry.name}:</span>
-          <span className="font-semibold text-gray-800">Rp {formatCompact(entry.value)}</span>
+          <span className="text-gray-500 dark:text-gray-400">{entry.name}:</span>
+          <span className="font-semibold text-gray-800 dark:text-gray-100">Rp {formatCompact(entry.value)}</span>
         </div>
       ))}
     </div>
@@ -152,26 +152,26 @@ export default function Insights() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <Sparkles className="text-amber-500" size={24} />
             Insight
           </h1>
-          <p className="text-sm text-gray-400 mt-0.5">Analisis keuangan & tren pengeluaran</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Analisis keuangan & tren pengeluaran</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={month}
             onChange={(e) => setMonth(parseInt(e.target.value))}
-            className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm bg-white dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
           >
             {MONTH_FULL.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
           </select>
-          <div className="flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <button onClick={() => setYear(year - 1)} className="px-2.5 py-2 hover:bg-gray-50 text-gray-400">
+          <div className="flex items-center bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden">
+            <button onClick={() => setYear(year - 1)} className="px-2.5 py-2 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400 dark:text-gray-500">
               <ChevronLeft size={16} />
             </button>
-            <span className="px-3 text-sm font-semibold text-gray-700 min-w-[60px] text-center">{year}</span>
-            <button onClick={() => setYear(year + 1)} className="px-2.5 py-2 hover:bg-gray-50 text-gray-400">
+            <span className="px-3 text-sm font-semibold text-gray-700 dark:text-gray-200 min-w-[60px] text-center">{year}</span>
+            <button onClick={() => setYear(year + 1)} className="px-2.5 py-2 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400 dark:text-gray-500">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -180,24 +180,24 @@ export default function Insights() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-5 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-green-50 rounded-lg"><ArrowUpRight size={16} className="text-green-500" /></div>
-            <span className="text-xs text-gray-400">Pemasukan {year}</span>
+            <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg"><ArrowUpRight size={16} className="text-green-500" /></div>
+            <span className="text-xs text-gray-400 dark:text-gray-500">Pemasukan {year}</span>
           </div>
           <p className="text-base sm:text-xl font-bold text-green-600">Rp {formatCompact(totalIncome)}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-5 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-red-50 rounded-lg"><ArrowDownRight size={16} className="text-red-500" /></div>
-            <span className="text-xs text-gray-400">Pengeluaran {year}</span>
+            <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-lg"><ArrowDownRight size={16} className="text-red-500" /></div>
+            <span className="text-xs text-gray-400 dark:text-gray-500">Pengeluaran {year}</span>
           </div>
           <p className="text-base sm:text-xl font-bold text-red-600">Rp {formatCompact(totalExpense)}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-5 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-blue-50 rounded-lg"><Wallet size={16} className="text-blue-500" /></div>
-            <span className="text-xs text-gray-400">Saldo {year}</span>
+            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg"><Wallet size={16} className="text-blue-500" /></div>
+            <span className="text-xs text-gray-400 dark:text-gray-500">Saldo {year}</span>
           </div>
           <p className={`text-base sm:text-xl font-bold ${yearBalance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
             Rp {formatCompact(yearBalance)}
@@ -216,13 +216,13 @@ export default function Insights() {
       {/* Row 1: Yearly Trend + Cash Flow */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         {/* Mixed Chart - Yearly Trend */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-sm sm:text-lg font-semibold text-gray-800">Tren Keuangan Tahunan</h2>
+            <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100">Tren Keuangan Tahunan</h2>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-green-400" /> Masuk</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-red-400" /> Keluar</span>
-              <span className="flex items-center gap-1.5 hidden sm:flex"><span className="w-3 h-1.5 rounded-full bg-blue-500" /> Saldo</span>
+              <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-green-400" /> Masuk</span>
+              <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-red-400" /> Keluar</span>
+              <span className="flex items-center gap-1.5 hidden sm:flex text-gray-600 dark:text-gray-300"><span className="w-3 h-1.5 rounded-full bg-blue-500" /> Saldo</span>
             </div>
           </div>
           {chartData.some(d => d.Pemasukan > 0 || d.Pengeluaran > 0) ? (
@@ -255,18 +255,18 @@ export default function Insights() {
               </ComposedChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-[280px] text-gray-400 dark:text-gray-500 text-sm">
               Belum ada data untuk tahun {year}
             </div>
           )}
         </div>
 
         {/* Cash Flow Area Chart */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-sm sm:text-lg font-semibold text-gray-800">Akumulasi Cash Flow</h2>
+            <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100">Akumulasi Cash Flow</h2>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-indigo-500" /> Akumulasi</span>
+              <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded-full bg-indigo-500" /> Akumulasi</span>
             </div>
           </div>
           {cashFlowData.some(d => d.Income > 0 || d.Expense > 0) ? (
@@ -294,7 +294,7 @@ export default function Insights() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-[280px] text-gray-400 dark:text-gray-500 text-sm">
               Belum ada data untuk tahun {year}
             </div>
           )}
@@ -302,13 +302,13 @@ export default function Insights() {
       </div>
 
       {/* Row 2: Expense Ratio Mixed Chart */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800">Rasio Pengeluaran terhadap Pemasukan</h2>
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100">Rasio Pengeluaran terhadap Pemasukan</h2>
           <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-500" /> Pemasukan</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-rose-500" /> Pengeluaran</span>
-            <span className="flex items-center gap-1.5 hidden sm:flex"><span className="w-3 h-1.5 rounded-full bg-amber-500" /> Rasio %</span>
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-emerald-500" /> Pemasukan</span>
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300"><span className="w-3 h-3 rounded bg-rose-500" /> Pengeluaran</span>
+            <span className="flex items-center gap-1.5 hidden sm:flex text-gray-600 dark:text-gray-300"><span className="w-3 h-1.5 rounded-full bg-amber-500" /> Rasio %</span>
           </div>
         </div>
         {monthlyComparison.some(d => d.income > 0 || d.expense > 0) ? (
@@ -334,7 +334,7 @@ export default function Insights() {
             </ComposedChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center h-[300px] text-gray-400 text-sm">
+          <div className="flex items-center justify-center h-[300px] text-gray-400 dark:text-gray-500 text-sm">
             Belum ada data untuk tahun {year}
           </div>
         )}
@@ -344,8 +344,8 @@ export default function Insights() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
 
         {/* Top Categories Horizontal Bar */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-4">Top Kategori Pengeluaran</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Top Kategori Pengeluaran</h2>
           {expenseCats.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart
@@ -363,15 +363,15 @@ export default function Insights() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-[280px] text-gray-400 dark:text-gray-500 text-sm">
               Belum ada data pengeluaran
             </div>
           )}
         </div>
 
         {/* Category Radar Chart */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-4">Distribusi Kategori (Radar)</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Distribusi Kategori (Radar)</h2>
           {expenseCats.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <RadarChart data={expenseCats.slice(0, 8).map(c => ({
@@ -379,7 +379,7 @@ export default function Insights() {
                 value: c.total,
                 fullMark: Math.max(...expenseCats.map(e => e.total)),
               }))}>
-                <PolarGrid stroke="#e5e7eb" />
+                <PolarGrid stroke="#e5e7eb" className="dark:stroke-gray-600" />
                 <PolarAngleAxis dataKey="category" tick={{ fontSize: 10 }} />
                 <PolarRadiusAxis tick={{ fontSize: 9 }} tickFormatter={formatCompact} />
                 <Radar
@@ -402,19 +402,19 @@ export default function Insights() {
       </div>
 
       {/* Category Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-800">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+        <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100">
             Detail Pengeluaran & Pemasukan - {MONTH_FULL[month - 1]} {year}
           </h2>
         </div>
 
         {/* Income Section */}
         {incomeCats.length > 0 && (
-          <div className="border-b border-gray-100">
-            <div className="px-4 sm:px-6 py-3 bg-green-50/50 flex items-center gap-2">
+          <div className="border-b border-gray-100 dark:border-gray-700">
+            <div className="px-4 sm:px-6 py-3 bg-green-50/50 dark:bg-green-900/20 flex items-center gap-2">
               <ArrowUpRight size={16} className="text-green-500" />
-              <span className="text-sm font-semibold text-green-700">Pemasukan</span>
+              <span className="text-sm font-semibold text-green-700 dark:text-green-400">Pemasukan</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -440,14 +440,14 @@ export default function Insights() {
                             <span className="font-medium text-gray-700">{c.category_name}</span>
                           </div>
                         </td>
-                        <td className="text-center px-3 py-3 text-gray-400 hidden sm:table-cell">{c.count}</td>
-                        <td className="text-right px-3 py-3 font-semibold text-green-600">Rp {formatRupiah(c.total)}</td>
+                        <td className="text-center px-3 py-3 text-gray-400 dark:text-gray-500 hidden sm:table-cell">{c.count}</td>
+                        <td className="text-right px-3 py-3 font-semibold text-green-600 dark:text-green-400">Rp {formatRupiah(c.total)}</td>
                         <td className="text-right px-3 py-3 hidden sm:table-cell">
                           <div className="flex items-center justify-end gap-2">
-                            <div className="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="w-16 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div className="h-full rounded-full bg-green-400" style={{ width: `${pct}%` }} />
                             </div>
-                            <span className="text-xs text-gray-400 w-8">{pct}%</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 w-8">{pct}%</span>
                           </div>
                         </td>
                         <td className="text-right px-3 sm:px-6 py-3 hidden md:table-cell">
@@ -456,8 +456,8 @@ export default function Insights() {
                       </tr>
                     );
                   })}
-                  <tr className="bg-green-50/30 font-semibold">
-                    <td className="px-4 sm:px-6 py-3 text-green-700">Total Pemasukan</td>
+                  <tr className="bg-green-50/30 dark:bg-green-900/20 font-semibold">
+                    <td className="px-4 sm:px-6 py-3 text-green-700 dark:text-green-400">Total Pemasukan</td>
                     <td className="text-center px-3 py-3 text-green-600 hidden sm:table-cell">{incomeCats.reduce((s, c) => s + c.count, 0)}</td>
                     <td className="text-right px-3 py-3 text-green-700">Rp {formatRupiah(totalCatIncome)}</td>
                     <td className="text-right px-3 py-3 text-green-600 hidden sm:table-cell">100%</td>
@@ -472,14 +472,14 @@ export default function Insights() {
         {/* Expense Section */}
         {expenseCats.length > 0 && (
           <div>
-            <div className="px-4 sm:px-6 py-3 bg-red-50/50 flex items-center gap-2">
+            <div className="px-4 sm:px-6 py-3 bg-red-50/50 dark:bg-red-900/20 flex items-center gap-2">
               <ArrowDownRight size={16} className="text-red-500" />
-              <span className="text-sm font-semibold text-red-700">Pengeluaran</span>
+              <span className="text-sm font-semibold text-red-700 dark:text-red-400">Pengeluaran</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-50 text-gray-400 text-xs">
+                  <tr className="border-b border-gray-50 dark:border-gray-700 text-gray-400 dark:text-gray-500 text-xs">
                     <th className="text-left px-4 sm:px-6 py-2.5 font-medium">Kategori</th>
                     <th className="text-center px-3 py-2.5 font-medium hidden sm:table-cell">Transaksi</th>
                     <th className="text-right px-3 py-2.5 font-medium">Jumlah</th>
@@ -493,21 +493,21 @@ export default function Insights() {
                     const weekly = weeklyMap[c.category_id] || [{ expense: 0 }, { expense: 0 }, { expense: 0 }, { expense: 0 }];
                     const sparkData = weekly.map(w => ({ expense: w.expense }));
                     return (
-                      <tr key={c.category_id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                      <tr key={c.category_id} className="border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
                         <td className="px-4 sm:px-6 py-3">
                           <div className="flex items-center gap-2.5">
                             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: c.category_color }} />
-                            <span className="font-medium text-gray-700">{c.category_name}</span>
+                            <span className="font-medium text-gray-700 dark:text-gray-200">{c.category_name}</span>
                           </div>
                         </td>
-                        <td className="text-center px-3 py-3 text-gray-400 hidden sm:table-cell">{c.count}</td>
-                        <td className="text-right px-3 py-3 font-semibold text-red-600">Rp {formatRupiah(c.total)}</td>
+                        <td className="text-center px-3 py-3 text-gray-400 dark:text-gray-500 hidden sm:table-cell">{c.count}</td>
+                        <td className="text-right px-3 py-3 font-semibold text-red-600 dark:text-red-400">Rp {formatRupiah(c.total)}</td>
                         <td className="text-right px-3 py-3 hidden sm:table-cell">
                           <div className="flex items-center justify-end gap-2">
-                            <div className="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="w-16 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div className="h-full rounded-full bg-red-400" style={{ width: `${pct}%` }} />
                             </div>
-                            <span className="text-xs text-gray-400 w-8">{pct}%</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 w-8">{pct}%</span>
                           </div>
                         </td>
                         <td className="text-right px-3 sm:px-6 py-3 hidden md:table-cell">
@@ -516,8 +516,8 @@ export default function Insights() {
                       </tr>
                     );
                   })}
-                  <tr className="bg-red-50/30 font-semibold">
-                    <td className="px-4 sm:px-6 py-3 text-red-700">Total Pengeluaran</td>
+                  <tr className="bg-red-50/30 dark:bg-red-900/20 font-semibold">
+                    <td className="px-4 sm:px-6 py-3 text-red-700 dark:text-red-400">Total Pengeluaran</td>
                     <td className="text-center px-3 py-3 text-red-600 hidden sm:table-cell">{expenseCats.reduce((s, c) => s + c.count, 0)}</td>
                     <td className="text-right px-3 py-3 text-red-700">Rp {formatRupiah(totalCatExpense)}</td>
                     <td className="text-right px-3 py-3 text-red-600 hidden sm:table-cell">100%</td>
@@ -530,7 +530,7 @@ export default function Insights() {
         )}
 
         {incomeCats.length === 0 && expenseCats.length === 0 && (
-          <div className="flex items-center justify-center py-16 text-gray-400 text-sm">
+          <div className="flex items-center justify-center py-16 text-gray-400 dark:text-gray-500 text-sm">
             Belum ada data transaksi untuk bulan ini
           </div>
         )}
@@ -540,8 +540,8 @@ export default function Insights() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
           {/* Expense Distribution */}
           {expenseCats.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
-              <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-4">Distribusi Pengeluaran</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
+              <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Distribusi Pengeluaran</h2>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <ResponsiveContainer width={180} height={180}>
                   <PieChart>
@@ -563,8 +563,8 @@ export default function Insights() {
                   {expenseCats.slice(0, 8).map(c => (
                     <div key={c.category_id} className="flex items-center gap-2 text-sm">
                       <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: c.category_color }} />
-                      <span className="text-gray-600 truncate flex-1">{c.category_name}</span>
-                      <span className="text-gray-400 text-xs">{totalCatExpense > 0 ? Math.round((c.total / totalCatExpense) * 100) : 0}%</span>
+                      <span className="text-gray-600 dark:text-gray-300 truncate flex-1">{c.category_name}</span>
+                      <span className="text-gray-400 dark:text-gray-500 text-xs">{totalCatExpense > 0 ? Math.round((c.total / totalCatExpense) * 100) : 0}%</span>
                     </div>
                   ))}
                 </div>
@@ -574,8 +574,8 @@ export default function Insights() {
 
           {/* Income Distribution */}
           {incomeCats.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm">
-              <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-4">Distribusi Pemasukan</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 shadow-sm transition-colors">
+              <h2 className="text-sm sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Distribusi Pemasukan</h2>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <ResponsiveContainer width={180} height={180}>
                   <PieChart>
@@ -597,8 +597,8 @@ export default function Insights() {
                   {incomeCats.slice(0, 8).map(c => (
                     <div key={c.category_id} className="flex items-center gap-2 text-sm">
                       <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: c.category_color }} />
-                      <span className="text-gray-600 truncate flex-1">{c.category_name}</span>
-                      <span className="text-gray-400 text-xs">{totalCatIncome > 0 ? Math.round((c.total / totalCatIncome) * 100) : 0}%</span>
+                      <span className="text-gray-600 dark:text-gray-300 truncate flex-1">{c.category_name}</span>
+                      <span className="text-gray-400 dark:text-gray-500 text-xs">{totalCatIncome > 0 ? Math.round((c.total / totalCatIncome) * 100) : 0}%</span>
                     </div>
                   ))}
                 </div>
