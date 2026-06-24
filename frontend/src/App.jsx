@@ -14,6 +14,7 @@ import Budgets from './pages/Budgets';
 import Recurring from './pages/Recurring';
 import InsightCharts from './pages/InsightCharts';
 import InsightTables from './pages/InsightTables';
+import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import Docs from './pages/Docs';
 
 function ProtectedRoute({ children }) {
@@ -42,6 +43,7 @@ function AppRoutes() {
       <Route path="/recurring" element={<ProtectedRoute><Recurring /></ProtectedRoute>} />
       <Route path="/insights" element={<Navigate to="/insights/charts" replace />} />
       <Route path="/insights/charts" element={<ProtectedRoute><InsightCharts /></ProtectedRoute>} />
+      <Route path="/insights/analytics" element={<ProtectedRoute><AdvancedAnalytics /></ProtectedRoute>} />
       <Route path="/insights/tables" element={<ProtectedRoute><InsightTables /></ProtectedRoute>} />
       <Route path="/docs" element={<ProtectedRoute><Docs /></ProtectedRoute>} />
     </Routes>

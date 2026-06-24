@@ -77,6 +77,9 @@ export const getYearlyTrend = (year) =>
 export const getCategoryTrend = (month, year) =>
   api.get('/reports/category-trend', { params: { month, year } }).then((r) => r.data);
 
+export const getAdvancedAnalytics = () =>
+  api.get('/reports/analytics').then((r) => r.data);
+
 // Savings Goals
 export const getSavingsGoals = () =>
   api.get('/savings-goals').then((r) => r.data);

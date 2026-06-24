@@ -17,6 +17,7 @@ const navItems = [
     to: '/insights', label: 'Insight', icon: Sparkles,
     children: [
       { to: '/insights/charts', label: 'Chart Data', icon: BarChart3 },
+      { to: '/insights/analytics', label: 'Advanced Analytics', icon: Sparkles },
       { to: '/insights/tables', label: 'Table Data', icon: Table2 },
     ],
   },
@@ -41,6 +42,7 @@ const mobileNav = [
     type: 'dropdown', key: 'insight', label: 'Insight', icon: Sparkles,
     items: [
       { to: '/insights/charts', label: 'Chart Data', icon: BarChart3 },
+      { to: '/insights/analytics', label: 'Advanced Analytics', icon: Sparkles },
       { to: '/insights/tables', label: 'Table Data', icon: Table2 },
     ],
   },
@@ -75,6 +77,7 @@ export default function Layout({ children }) {
     '/savings': 'Tabungan',
     '/recurring': 'Transaksi Berulang',
     '/insights/charts': 'Chart Data',
+    '/insights/analytics': 'Advanced Analytics',
     '/insights/tables': 'Table Data',
     '/reports': 'Laporan',
     '/docs': 'Dokumentasi',
@@ -221,11 +224,11 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors overflow-x-hidden">
-      <aside className="hidden md:flex md:flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 fixed top-0 bottom-0 left-0 z-30 transition-colors">
+      <aside className="hidden md:flex md:flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 fixed top-0 bottom-0 left-0 z-30 transition-colors print:hidden">
         <SidebarContent onItemClick={() => {}} />
       </aside>
 
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-700 transition-colors">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-700 transition-colors print:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
@@ -244,7 +247,7 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <nav ref={bottomNavRef} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 safe-area-pb transition-colors">
+      <nav ref={bottomNavRef} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 safe-area-pb transition-colors print:hidden">
         <div className="grid grid-cols-5 h-16 relative">
           {mobileNav.map((entry, idx) => {
             if (entry.type === 'link') {
@@ -319,9 +322,9 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <main className="flex-1 md:ml-64 overflow-x-hidden">
-        <div className="pt-14 pb-20 md:pt-0 md:pb-0">
-          <div className="max-w-7xl mx-auto px-3 py-4 md:px-8 md:py-8 overflow-x-hidden">{children}</div>
+      <main className="flex-1 md:ml-64 print:ml-0 overflow-x-hidden">
+        <div className="pt-14 pb-20 md:pt-0 md:pb-0 print:pt-0 print:pb-0">
+          <div className="max-w-7xl mx-auto px-3 py-4 md:px-8 md:py-8 print:p-0 overflow-x-hidden">{children}</div>
         </div>
       </main>
     </div>

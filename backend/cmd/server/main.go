@@ -71,6 +71,7 @@ func main() {
 			protected.GET("/reports/summary", handler.GetSummary)
 			protected.GET("/reports/yearly-trend", handler.GetYearlyTrend)
 			protected.GET("/reports/category-trend", handler.GetCategoryTrend)
+			protected.GET("/reports/analytics", handler.GetAdvancedAnalytics)
 
 			// Savings goals
 			protected.GET("/savings-goals", handler.GetSavingsGoals)

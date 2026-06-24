@@ -4,7 +4,8 @@ import {
   PieChart, Pie, Cell, Legend, ComposedChart, Line, Area
 } from 'recharts';
 import Card from '../components/Card';
-import { getSummary, getYearlyTrend } from '../api/client';
+import { getSummary, getYearlyTrend, getTransactions } from '../api/client';
+import { Download, Printer } from 'lucide-react';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
@@ -42,6 +43,50 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
 
   const [yearlyTrend, setYearlyTrend] = useState(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    try {
+      setExporting(true);
+      const res = await getTransactions({ month, year, limit: 1000 });
+      const txs = res.transactions || [];
+      if (txs.length === 0) {
+        alert('Tidak ada transaksi untuk diekspor pada periode ini.');
+        return;
+      }
+
+      // Build CSV content
+      const headers = ['ID', 'Tanggal', 'Kategori', 'Deskripsi', 'Tipe', 'Jumlah (Rp)'];
+      const rows = txs.map(t => [
+        t.id,
+        t.date,
+        t.category_name || '',
+        `"${(t.description || '').replace(/"/g, '""')}"`,
+        t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
+        t.amount
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Laporan_Keuangan_${month}_${year}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert('Gagal mengekspor data.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -82,7 +127,7 @@ export default function Reports() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">Laporan</h1>
-        <div className="flex gap-2.5 sm:gap-3">
+        <div className="flex gap-2.5 sm:gap-3 print:hidden">
           <select
             value={month}
             onChange={(e) => setMonth(parseInt(e.target.value))}
@@ -101,6 +146,23 @@ export default function Reports() {
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
+          <button
+            onClick={handleExportCSV}
+            disabled={exporting}
+            className="flex items-center gap-1.5 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm bg-white dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+            title="Ekspor ke CSV"
+          >
+            <Download size={16} />
+            <span className="hidden md:inline">Ekspor CSV</span>
+          </button>
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-1.5 bg-blue-600 text-white rounded-xl px-3 py-2 text-sm hover:bg-blue-700 transition-colors"
+            title="Cetak Laporan"
+          >
+            <Printer size={16} />
+            <span className="hidden md:inline">Cetak</span>
+          </button>
         </div>
       </div>
 
