@@ -1,3 +1,42 @@
-.qoder
+# ── IDE & Editor ─────────────────────────────────────────
+.vscode/
+.idea/
+.qoder/
+*.suo
+*.user
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs & temp ───────────────────────────────────────────
+*.log
+*.log.*
+*.tmp
+*.temp
 start.bat
 test.txt
+
+# ── Environment / secrets ─────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Frontend build output ─────────────────────────────────
+frontend/dist/
+frontend/.vercel-tmp/
+
+# ── Frontend dependencies ─────────────────────────────────
+frontend/node_modules/
+
+# ── Backend build ─────────────────────────────────────────
+backend/*.exe
+backend/vendor/
+
+# ── ML Python ─────────────────────────────────────────────
+ml/.venv/
+ml/__pycache__/
+ml/**/__pycache__/
+ml/*.pyc
+ml/models/
