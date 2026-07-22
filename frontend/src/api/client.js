@@ -128,4 +128,17 @@ export const deleteRecurring = (id) =>
 export const processRecurring = () =>
   api.post('/recurring/process').then((r) => r.data);
 
+// Machine Learning
+export const mlPredictCategory = (description) =>
+  api.post('/ml/predict-category', { description }).then((r) => r.data);
+
+export const mlForecast = () =>
+  api.post('/ml/forecast').then((r) => r.data);
+
+export const mlTrain = () =>
+  api.post('/ml/train').then((r) => r.data);
+
+export const mlHealth = () =>
+  api.get('/ml/health').then((r) => r.data);
+
 export default api;

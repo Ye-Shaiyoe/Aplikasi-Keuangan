@@ -1,24 +1,17 @@
-@"
+# Build output
+dist/
+
 # Dependencies
 node_modules/
-backend/vendor/
 
-# Build outputs
-frontend/dist/
-*.exe
-
-# Environment files
+# Environment
 .env
-*.env.local
+.env.local
+.env.*.local
 
-# IDE
-.vscode/
-.idea/
+# Vercel temp
+.vercel-tmp/
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-"@ | Out-File -Encoding utf8 .gitignore

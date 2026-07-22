@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import {
   LayoutDashboard, ArrowLeftRight, Wallet, BarChart3, LogOut, UserCircle, Target, Sparkles,
-  Moon, Sun, Menu, X, BookOpen, Repeat, Table2, ChevronDown,
+  Moon, Sun, Menu, X, BookOpen, Repeat, Table2, ChevronDown, Brain,
 } from 'lucide-react';
 
 const navItems = [
@@ -19,6 +19,7 @@ const navItems = [
       { to: '/insights/charts', label: 'Chart Data', icon: BarChart3 },
       { to: '/insights/analytics', label: 'Advanced Analytics', icon: Sparkles },
       { to: '/insights/tables', label: 'Table Data', icon: Table2 },
+      { to: '/insights/ml', label: 'ML Insights', icon: Brain },
     ],
   },
   { to: '/reports', label: 'Laporan', icon: BarChart3 },
@@ -44,6 +45,7 @@ const mobileNav = [
       { to: '/insights/charts', label: 'Chart Data', icon: BarChart3 },
       { to: '/insights/analytics', label: 'Advanced Analytics', icon: Sparkles },
       { to: '/insights/tables', label: 'Table Data', icon: Table2 },
+      { to: '/insights/ml', label: 'ML Insights', icon: Brain },
     ],
   },
   {
@@ -79,6 +81,7 @@ export default function Layout({ children }) {
     '/insights/charts': 'Chart Data',
     '/insights/analytics': 'Advanced Analytics',
     '/insights/tables': 'Table Data',
+    '/insights/ml': 'ML Insights',
     '/reports': 'Laporan',
     '/docs': 'Dokumentasi',
   };
@@ -98,14 +101,14 @@ export default function Layout({ children }) {
 
   const SidebarContent = ({ onItemClick }) => (
     <>
-      <div className="p-5 pb-4">
+      <div className="p-5 pb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-500/20">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-blue-500/30">
             C
           </div>
           <div>
-            <h1 className="text-base font-bold text-gray-800 dark:text-gray-100 tracking-tight">Catatan Keuangan</h1>
-            <p className="text-[11px] text-gray-400 dark:text-gray-500">Personal Finance Tracker</p>
+            <h1 className="text-sm font-bold text-gray-800 dark:text-gray-100 tracking-tight">Catatan Keuangan</h1>
+            <p className="text-[10px] text-gray-400 dark:text-gray-500">Personal Finance Tracker</p>
           </div>
         </div>
       </div>
@@ -203,17 +206,17 @@ export default function Layout({ children }) {
           <span>{dark ? 'Mode Terang' : 'Mode Gelap'}</span>
         </button>
       </div>
-      <div className="p-3 border-t border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-800 dark:to-gray-800 rounded-xl border border-gray-100/50 dark:border-gray-700">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm shadow-blue-500/20">
+      <div className="p-3 border-t border-gray-100 dark:border-gray-800">
+        <div className="flex items-center gap-2.5 px-3 py-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-100 dark:border-gray-700/50">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm shadow-blue-500/30 shrink-0">
             {user?.name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium text-gray-700 dark:text-gray-200 truncate">{user?.name}</p>
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 truncate">{user?.email}</p>
+            <p className="text-[12px] font-semibold text-gray-700 dark:text-gray-200 truncate">{user?.name}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{user?.email}</p>
           </div>
-          <button onClick={logout} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors group" title="Keluar">
-            <LogOut size={16} className="text-gray-300 dark:text-gray-600 group-hover:text-red-500" />
+          <button onClick={logout} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors group" title="Keluar">
+            <LogOut size={15} className="text-gray-300 dark:text-gray-600 group-hover:text-red-500 transition-colors" />
           </button>
         </div>
       </div>
@@ -223,12 +226,12 @@ export default function Layout({ children }) {
   const isPathActive = (to) => (to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors overflow-x-hidden">
-      <aside className="hidden md:flex md:flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 fixed top-0 bottom-0 left-0 z-30 transition-colors print:hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0f1117] flex transition-colors overflow-x-hidden">
+      <aside className="hidden md:flex md:flex-col w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-100 dark:border-gray-800 fixed top-0 bottom-0 left-0 z-30 transition-colors print:hidden shadow-sm">
         <SidebarContent onItemClick={() => {}} />
       </aside>
 
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-700 transition-colors print:hidden">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 transition-colors print:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
@@ -247,7 +250,7 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <nav ref={bottomNavRef} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 safe-area-pb transition-colors print:hidden">
+      <nav ref={bottomNavRef} className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 safe-area-pb transition-colors print:hidden">
         <div className="grid grid-cols-5 h-16 relative">
           {mobileNav.map((entry, idx) => {
             if (entry.type === 'link') {
@@ -324,7 +327,7 @@ export default function Layout({ children }) {
 
       <main className="flex-1 md:ml-64 print:ml-0 overflow-x-hidden">
         <div className="pt-14 pb-20 md:pt-0 md:pb-0 print:pt-0 print:pb-0">
-          <div className="max-w-7xl mx-auto px-3 py-4 md:px-8 md:py-8 print:p-0 overflow-x-hidden">{children}</div>
+          <div className="max-w-7xl mx-auto px-3 py-4 md:px-8 md:py-8 print:p-0 overflow-x-hidden page-enter">{children}</div>
         </div>
       </main>
     </div>

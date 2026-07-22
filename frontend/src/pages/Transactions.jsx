@@ -1,7 +1,7 @@
-﻿import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Filter, ChevronDown, ChevronUp, X } from 'lucide-react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { Plus, Pencil, Trash2, Filter, ChevronDown, ChevronUp, X, Sparkles } from 'lucide-react';
 import Modal from '../components/Modal';
-import { getTransactions, getCategories, createTransaction, updateTransaction, deleteTransaction } from '../api/client';
+import { getTransactions, getCategories, createTransaction, updateTransaction, deleteTransaction, mlPredictCategory } from '../api/client';
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -16,6 +16,10 @@ export default function Transactions() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // ML auto-suggest
+  const [mlSuggestion, setMlSuggestion] = useState(null);
+  const mlDebounceRef = useRef(null);
 
   const limit = 15;
 
@@ -40,6 +44,7 @@ export default function Transactions() {
   const openAdd = () => {
     setEditItem(null);
     setFormError('');
+    setMlSuggestion(null);
     setForm({ category_id: '', amount: '', description: '', date: new Date().toISOString().split('T')[0], type: 'expense' });
     setModalOpen(true);
   };
@@ -47,6 +52,7 @@ export default function Transactions() {
   const openEdit = (t) => {
     setEditItem(t);
     setFormError('');
+    setMlSuggestion(null);
     setForm({
       category_id: t.category_id,
       amount: t.amount,
@@ -92,6 +98,29 @@ export default function Transactions() {
     if (!window.confirm('Hapus transaksi ini?')) return;
     await deleteTransaction(id);
     setTransactions(transactions.filter((t) => t.id !== id));
+  };
+
+  // Debounced ML category suggestion when user types description
+  const handleDescriptionChange = (value) => {
+    setForm((f) => ({ ...f, description: value }));
+    setMlSuggestion(null);
+    if (mlDebounceRef.current) clearTimeout(mlDebounceRef.current);
+    if (value.trim().length < 4) return;
+    mlDebounceRef.current = setTimeout(async () => {
+      try {
+        const res = await mlPredictCategory(value.trim());
+        // Only suggest if confidence is reasonable
+        if (res?.confidence >= 0.1) setMlSuggestion(res);
+      } catch {
+        // silently ignore — ML service may not be running
+      }
+    }, 600);
+  };
+
+  const applyMlSuggestion = () => {
+    if (!mlSuggestion) return;
+    setForm((f) => ({ ...f, category_id: String(mlSuggestion.predicted_category_id) }));
+    setMlSuggestion(null);
   };
 
   const totalPages = Math.ceil(total / limit);
@@ -446,10 +475,22 @@ export default function Transactions() {
             <input
               type="text"
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
               className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 dark:text-gray-200"
               placeholder="Contoh: Makan siang, Belanja bulanan..."
             />
+            {mlSuggestion && (
+              <button
+                type="button"
+                onClick={applyMlSuggestion}
+                className="mt-1.5 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+              >
+                <Sparkles size={12} />
+                Saran kategori: <strong>{mlSuggestion.predicted_category_name}</strong>
+                <span className="text-indigo-400">({(mlSuggestion.confidence * 100).toFixed(0)}%)</span>
+                · Ketuk untuk pakai
+              </button>
+            )}
           </div>
           {formError && (
             <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-2.5">

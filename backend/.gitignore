@@ -1,24 +1,15 @@
-@"
-# Dependencies
-node_modules/
-backend/vendor/
-
-# Build outputs
-frontend/dist/
+# Build output
 *.exe
+*.out
 
-# Environment files
+# Environment
 .env
-*.env.local
+.env.local
+.env.*.local
 
-# IDE
-.vscode/
-.idea/
-.qoder/
-# OS files
+# Dependencies
+vendor/
+
+# OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-"@ | Out-File -Encoding utf8 .gitignore

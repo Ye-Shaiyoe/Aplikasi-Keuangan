@@ -95,6 +95,12 @@ func main() {
 			protected.PUT("/recurring/:id", handler.UpdateRecurring)
 			protected.DELETE("/recurring/:id", handler.DeleteRecurring)
 			protected.POST("/recurring/process", handler.ProcessRecurringNow)
+
+			// Machine Learning
+			protected.POST("/ml/predict-category", handler.MLPredictCategory)
+			protected.POST("/ml/forecast", handler.MLForecast)
+			protected.POST("/ml/train", handler.MLTrainModel)
+			protected.GET("/ml/health", handler.MLHealth)
 		}
 	}
 

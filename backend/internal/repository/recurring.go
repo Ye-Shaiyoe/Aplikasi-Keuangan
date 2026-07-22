@@ -109,12 +109,16 @@ func UpdateRecurring(id, userID int, req model.RecurringRequest) (*model.Recurri
 		endDate = req.EndDate
 	}
 
-	// Keep existing next_date unless start_date moved past it
+	// If start_date changes, reset next_date to new start_date. Otherwise, keep next_date unless start_date moved past it.
 	query := `
 		UPDATE recurring_transactions SET
 			category_id = $1, amount = $2, description = $3, type = $4, frequency = $5,
 			start_date = $6, end_date = $7, is_active = $8,
-			next_date = CASE WHEN $6::date > next_date THEN $6::date ELSE next_date END,
+			next_date = CASE 
+				WHEN start_date <> $6::date THEN $6::date
+				WHEN $6::date > next_date THEN $6::date 
+				ELSE next_date 
+			END,
 			updated_at = NOW()
 		WHERE id = $9 AND user_id = $10
 		RETURNING id, user_id, category_id, amount, description, type, frequency,
@@ -186,20 +190,7 @@ func GetDueRecurring(userID int) ([]model.RecurringTransaction, error) {
 // AdvanceRecurring moves next_date forward by one frequency period and sets
 // last_processed to the old next_date. If an end_date is set and the new
 // next_date exceeds it, the recurring is deactivated.
-func AdvanceRecurring(id int, frequency, endDateStr string) error {
-	// Fetch current next_date so we can advance from it.
-	var nextDateStr string
-	err := database.Pool.QueryRow(context.Background(),
-		"SELECT next_date::text FROM recurring_transactions WHERE id = $1", id).Scan(&nextDateStr)
-	if err != nil {
-		return fmt.Errorf("fetch next_date: %w", err)
-	}
-
-	nextDate, err := time.Parse("2006-01-02", nextDateStr)
-	if err != nil {
-		return fmt.Errorf("parse next_date: %w", err)
-	}
-
+func AdvanceRecurring(id int, nextDate time.Time, frequency, endDateStr string) error {
 	var newDate time.Time
 	switch frequency {
 	case "daily":
@@ -223,11 +214,11 @@ func AdvanceRecurring(id int, frequency, endDateStr string) error {
 	}
 
 	// last_processed = the next_date that was just processed
-	_, err = database.Pool.Exec(context.Background(), `
+	_, err := database.Pool.Exec(context.Background(), `
 		UPDATE recurring_transactions
 		SET last_processed = $1, next_date = $2, is_active = $3, updated_at = NOW()
 		WHERE id = $4
-	`, nextDateStr, newDate.Format("2006-01-02"), active, id)
+	`, nextDate.Format("2006-01-02"), newDate.Format("2006-01-02"), active, id)
 	if err != nil {
 		return fmt.Errorf("advance recurring %d: %w", id, err)
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/akrom/finance-backend/internal/model"
 	"github.com/akrom/finance-backend/internal/repository"
@@ -34,17 +35,26 @@ func DeleteRecurring(id, userID int) error {
 func ProcessDueRecurring(userID int) (int, error) {
 	processed := 0
 	const maxIterations = 500
+	failedIDs := make(map[int]bool)
 
 	for iter := 0; iter < maxIterations; iter++ {
 		due, err := repository.GetDueRecurring(userID)
 		if err != nil {
 			return processed, fmt.Errorf("get due recurring: %w", err)
 		}
-		if len(due) == 0 {
+
+		var freshDue []model.RecurringTransaction
+		for _, r := range due {
+			if !failedIDs[r.ID] {
+				freshDue = append(freshDue, r)
+			}
+		}
+
+		if len(freshDue) == 0 {
 			break
 		}
 
-		for _, r := range due {
+		for _, r := range freshDue {
 			req := model.TransactionRequest{
 				CategoryID:  r.CategoryID,
 				Amount:      r.Amount,
@@ -52,13 +62,23 @@ func ProcessDueRecurring(userID int) (int, error) {
 				Date:        r.NextDate,
 				Type:        r.Type,
 			}
+
+			parsedNextDate, err := time.Parse("2006-01-02", r.NextDate)
+			if err != nil {
+				fmt.Printf("recurring: parse next_date %s failed for recurring %d: %v\n", r.NextDate, r.ID, err)
+				failedIDs[r.ID] = true
+				continue
+			}
+
 			if _, err := repository.CreateTransaction(r.UserID, req); err != nil {
 				// Log and skip this one so one bad row doesn't block the rest.
 				fmt.Printf("recurring: create transaction for recurring %d failed: %v\n", r.ID, err)
+				failedIDs[r.ID] = true
 				continue
 			}
-			if err := repository.AdvanceRecurring(r.ID, r.Frequency, r.EndDate); err != nil {
+			if err := repository.AdvanceRecurring(r.ID, parsedNextDate, r.Frequency, r.EndDate); err != nil {
 				fmt.Printf("recurring: advance recurring %d failed: %v\n", r.ID, err)
+				failedIDs[r.ID] = true
 				continue
 			}
 			processed++
