@@ -124,3 +124,63 @@ func calcPercent(spent, budget int64) int {
 	}
 	return pct
 }
+
+// GetBudgetsWithSpending returns all budgets for a month together with actual
+// spending figures. Used by the alert service.
+func GetBudgetsWithSpending(userID, month, year int) ([]model.BudgetWithSpending, error) {
+	rows, err := database.Pool.Query(context.Background(),
+		`SELECT
+			b.id, b.user_id, b.category_id, b.month, b.year, b.amount,
+			b.created_at, b.updated_at,
+			COALESCE(c.name, '') AS category_name,
+			COALESCE(c.color, '#6b7280') AS category_color,
+			COALESCE(SUM(t.amount) FILTER (WHERE t.type = 'expense'), 0) AS spent
+		 FROM budgets b
+		 LEFT JOIN categories c ON c.id = b.category_id
+		 LEFT JOIN transactions t ON t.category_id = b.category_id
+			AND t.user_id = $1
+			AND EXTRACT(MONTH FROM t.date) = $2
+			AND EXTRACT(YEAR FROM t.date) = $3
+		 WHERE b.user_id = $1 AND b.month = $2 AND b.year = $3
+		 GROUP BY b.id, b.user_id, b.category_id, b.month, b.year, b.amount,
+		          b.created_at, b.updated_at, c.name, c.color
+		 ORDER BY c.name`,
+		userID, month, year)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []model.BudgetWithSpending
+	for rows.Next() {
+		var bs model.BudgetWithSpending
+		if err := rows.Scan(
+			&bs.ID, &bs.UserID, &bs.CategoryID, &bs.Month, &bs.Year, &bs.Amount,
+			&bs.CreatedAt, &bs.UpdatedAt,
+			&bs.CategoryName, &bs.CategoryColor, &bs.Spent,
+		); err != nil {
+			return nil, err
+		}
+		bs.Remaining = bs.Amount - bs.Spent
+		bs.PercentUsed = calcPercent(bs.Spent, bs.Amount)
+		results = append(results, bs)
+	}
+	return results, nil
+}
+
+// CopyBudgetsFromMonth copies all budgets from a source month/year to a
+// destination month/year, skipping categories that already have a budget there.
+// Returns the number of rows inserted.
+func CopyBudgetsFromMonth(userID, fromMonth, fromYear, toMonth, toYear int) (int, error) {
+	tag, err := database.Pool.Exec(context.Background(),
+		`INSERT INTO budgets (user_id, category_id, month, year, amount)
+		 SELECT $1, category_id, $4, $5, amount
+		 FROM budgets
+		 WHERE user_id = $1 AND month = $2 AND year = $3
+		 ON CONFLICT (user_id, category_id, month, year) DO NOTHING`,
+		userID, fromMonth, fromYear, toMonth, toYear)
+	if err != nil {
+		return 0, err
+	}
+	return int(tag.RowsAffected()), nil
+}

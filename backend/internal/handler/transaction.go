@@ -178,3 +178,49 @@ func GetCategoryTrend(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, trend)
 }
+
+func ExportTransactionsCSV(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	var filter model.TransactionFilter
+	_ = c.ShouldBindQuery(&filter)
+
+	csvData, err := service.ExportTransactionsCSV(userID, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Header("Content-Disposition", "attachment; filename=transaksi.csv")
+	c.Data(http.StatusOK, "text/csv; charset=utf-8", csvData)
+}
+
+func BulkDeleteTransactions(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	var req model.BulkDeleteRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	deleted, err := service.BulkDeleteTransactions(userID, req.IDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.BulkDeleteResponse{
+		Deleted: deleted,
+		Message: "transaksi berhasil dihapus",
+	})
+}
+
+func GetSpendingStreak(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	streak, err := service.GetSpendingStreak(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, streak)
+}

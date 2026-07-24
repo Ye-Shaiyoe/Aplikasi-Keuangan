@@ -37,3 +37,31 @@ type BudgetSummaryResponse struct {
 	TotalSpent  int64                `json:"total_spent"`
 	Budgets     []BudgetWithSpending `json:"budgets"`
 }
+
+// BudgetAlert is generated when actual spending exceeds a configured threshold
+// percentage of the budget for a category.
+type BudgetAlert struct {
+	CategoryID    int     `json:"category_id"`
+	CategoryName  string  `json:"category_name"`
+	CategoryColor string  `json:"category_color"`
+	BudgetAmount  int64   `json:"budget_amount"`
+	SpentAmount   int64   `json:"spent_amount"`
+	PercentUsed   float64 `json:"percent_used"`
+	Severity      string  `json:"severity"` // "warning" (>=80%) or "critical" (>=100%)
+	Message       string  `json:"message"`
+}
+
+// BudgetAlertResponse wraps a list of budget alerts with summary counts.
+type BudgetAlertResponse struct {
+	Month    int           `json:"month"`
+	Year     int           `json:"year"`
+	Alerts   []BudgetAlert `json:"alerts"`
+	Warnings int           `json:"warnings"` // count of categories >= warningThreshold but < 100%
+	Critical int           `json:"critical"` // count of categories >= 100%
+}
+
+// CopyBudgetResponse reports the result of a copy-budget-from-last-month operation.
+type CopyBudgetResponse struct {
+	Copied  int    `json:"copied"`
+	Message string `json:"message"`
+}

@@ -1,0 +1,256 @@
+================================================================================
+                    LAPORAN PRAKTIK KERJA LAPANGAN (PKL) / MAGANG
+                       DOKUMENTASI FITUR DAN SPESIFIKASI SISTEM
+                            APLIKASI KEUNTUNGAN & KEUTAMAN
+                            "CATATAN KEUANGAN (FINANCE APP)"
+================================================================================
+
+--------------------------------------------------------------------------------
+1. INFORMASI UMUM SISTEM
+--------------------------------------------------------------------------------
+Nama Aplikasi     : Catatan Keuangan (Personal & UMKM Finance Tracker)
+Platform           : Web Application (Responsive Desktop & Mobile)
+Arsitektur         : Microservices / Modular Full-Stack (Frontend, Backend REST API, ML Microservice)
+Bahasa / Framework : React.js, Go (Golang), Python (FastAPI), PostgreSQL
+
+Aplikasi Catatan Keuangan adalah sistem informasi manajemen keuangan personal dan 
+Usaha Mikro, Kecil, dan Menengah (UMKM) yang dirancang untuk membantu pengguna 
+dalam mencatat, memantau, menganalisis, serta memproyeksikan kondisi keuangan 
+secara otomatis, real-time, dan cerdas berbasis Machine Learning.
+
+
+--------------------------------------------------------------------------------
+2. STACK TEKNOLOGI & ARSITEKTUR TEKNIS
+--------------------------------------------------------------------------------
+Aplikasi ini dikembangkan menggunakan arsitektur modern separation of concerns (SoC):
+
+A. Frontend (Client Side)
+   - Framework        : React.js 18 (Vite Bundler)
+   - Styling          : Tailwind CSS (Custom Color Palette & Dark Mode Support)
+   - Visualisasi Data : Recharts (ComposedChart, AreaChart, BarChart, RadarChart, PieChart)
+   - HTTP Client      : Axios (dilengkapi JWT Request Interceptor & Auto-Redirect 401)
+   - Routing          : React Router DOM v6
+   - Autentikasi OAuth: @react-oauth/google (Google Single Sign-On / SSO)
+
+B. Backend REST API (Server Side)
+   - Bahasa / Framework : Go (Golang v1.22+) / Gin Web Framework
+   - Arsitektur Code   : Clean Architecture (Handler -> Service -> Repository -> Database Model)
+   - Autentikasi       : JSON Web Token (JWT) dengan durasi masa berlaku 72 jam
+   - Keamanan Password : Bcrypt Password Hashing
+   - Database Driver   : pgx (PostgreSQL v16 Driver for Go)
+
+C. Machine Learning Microservice (AI Engine)
+   - Framework         : Python 3.11 / FastAPI
+   - Library ML        : Scikit-Learn, Pandas, NumPy
+   - NLP & Prediksi    : TF-IDF Vectorizer + Naive Bayes / Logistic Regression Classifier
+   - Forecasting       : Time-Series Linear Regression Trend Analysis
+
+D. Database System
+   - RDBMS             : PostgreSQL 16
+   - Tabel Utama       : users, categories, transactions, budgets, savings_goals, recurring_transactions
+
+
+--------------------------------------------------------------------------------
+3. RINCIAN MODUL DAN FITUR-FITUR APLIKASI
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+[MODUL 1] AUTENTIKASI DAN KEAMANAN PENGGUNA (AUTH & SECURITY)
+--------------------------------------------------------------------------------
+1.1. Registrasi & Login Akun Lokal (Email & Password)
+     - Pendaftaran pengguna baru dengan enkripsi password menggunakan algoritma Bcrypt.
+     - Validasi keunikan email agar tidak terjadi pendaftaran ganda.
+     - Login menghasilkan JSON Web Token (JWT) yang disimpan secara aman di Client.
+
+1.2. Single Sign-On (SSO) Google OAuth 2.0
+     - Login instan satu klik menggunakan akun Google tanpa perlu mengetik password.
+     - backend melakukan verifikasi token ke Google API (idtoken.Validate).
+     - Fitur Automatic Account Linking: Jika user mendaftar via email terlebih dahulu,
+       kemudian login via Google dengan email yang sama, sistem otomatis menghubungkan
+       akun Google tersebut ke data user yang sudah ada secara transparan.
+
+1.3. Auto-Seeding Kategori Bawaan (Default Categories)
+     - Saat user baru terdaftar, sistem secara otomatis menginjeksikan 13 kategori awal 
+       (pemasukan & pengeluaran dasar seperti Gaji, Makanan, Transportasi, Belanja, Tagihan, dll) 
+       sehingga user bisa langsung menggunakannya.
+
+1.4. Middleware Keamanan & Session Guard
+     - Setiap endpoint sensitif dilindungi oleh Auth Middleware.
+     - Menggunakan Bearer Token HTTP Header.
+     - Sesi login otomatis kedaluwarsa sesuai waktu JWT dan melakukan auto-logout saat HTTP 401 Unauthorized.
+
+
+--------------------------------------------------------------------------------
+[MODUL 2] MANAJEMEN TRANSAKSI (TRANSACTION MANAGEMENT)
+--------------------------------------------------------------------------------
+2.1. Pencatatan Transaksi Pemasukan (Income) & Pengeluaran (Expense)
+     - Formulir pencatatan transaksi yang intuitif (Jumlah/Amount, Kategori, Tanggal, Tipe, Deskripsi).
+     - Format angka otomatis dalam bentuk mata uang Rupiah (IDR).
+
+2.2. Filter, Pencarian, dan Urutan Transaksi
+     - Pencarian transaksi berdasarkan kata kunci pada deskripsi.
+     - Filter multi-kriteria: Berdasarkan Range Tanggal (Dari - Sampai), Kategori spesifik, dan Tipe (Pemasukan/Pengeluaran).
+     - Paginasi data untuk mempercepat pemuatan data dalam jumlah besar.
+
+2.3. Asisten Prediksi Kategori Otomatis (AI Auto-Categorize)
+     - Saat memasukkan deskripsi transaksi (misal: "Beli bensin di Pertamina"), sistem 
+       mengontak ML Microservice untuk memprediksi kategori secara otomatis ("Transportasi") 
+       beserta tingkat keyakinan (confidence score).
+
+
+--------------------------------------------------------------------------------
+[MODUL 3] MANAJEMEN KATEGORI KEUANGAN (CATEGORY MANAGEMENT)
+--------------------------------------------------------------------------------
+3.1. Kustomisasi Kategori Mandiri (CRUD Kategori)
+     - Pengguna dapat menambah, mengubah, dan menghapus kategori sesuai kebutuhan finansial masing-masing.
+     - Pengelompokan jenis kategori menjadi Pemasukan (Income) dan Pengeluaran (Expense).
+
+3.2. Visual Personalization (Ikon & Kode Warna)
+     - Pemilihan ikon unik untuk setiap kategori.
+     - Pemilihan warna kustom (Hex Color) yang nantinya secara dinamis menghiasi chart dan progress bar.
+
+
+--------------------------------------------------------------------------------
+[MODUL 4] ANGGARAN DAN LIMIT BULANAN (BUDGETING & MONITORING)
+--------------------------------------------------------------------------------
+4.1. Penetapan Limit Anggaran per Kategori
+     - Pengguna dapat menetapkan batas pengeluaran maksimum bulanan untuk kategori tertentu 
+       (misal: Kategori "Makanan & Minuman" max Rp 2.000.000 / bulan).
+
+4.2. Indikator Kemajuan Visual & Peringatan Overbudget
+     - Progress Bar interaktif yang menampilkan persentase akumulasi pengeluaran terhadap anggaran.
+     - Perubahan warna indikator otomatis:
+       * Hijau : Penggunaan di bawah 75%
+       * Kuning: Penggunaan 75% - 90% (Peringatan / Warning)
+       * Merah : Penggunaan > 90% atau Melebihi Anggaran (Overbudget Alert)
+     - Menampilkan perhitungan Sisa Anggaran (Remaining Budget) secara real-time.
+
+
+--------------------------------------------------------------------------------
+[MODUL 5] TARGET TABUNGAN & INVESTASI (SAVINGS GOALS)
+--------------------------------------------------------------------------------
+5.1. Pembuatan Target Tabungan (Savings Goal Management)
+     - Pembuatan target dana darurat, pembelian barang, atau investasi (Nama Target, Target Nominal, Tanggal Tenggat/Deadline).
+
+5.2. Fitur Setor (Deposit) dan Tarik (Withdraw) Dana
+     - Pengguna dapat melakukan alokasi setor dana ke target tabungan.
+     - Pengguna dapat melakukan penarikan dana dari target tabungan jika dibutuhkan.
+     - Riwayat mutasi setor/tarik tercatat secara rinci.
+
+5.3. Tracking Persentase Pencapaian & Progres
+     - Grafik progress bulat/batang yang menunjukkan seberapa dekat pengguna dengan target nominal.
+     - Perhitungan estimasi sisa nominal yang perlu ditabung.
+
+
+--------------------------------------------------------------------------------
+[MODUL 6] TRANSAKSI BERULANG OTOMATIS (RECURRING TRANSACTIONS)
+--------------------------------------------------------------------------------
+6.1. Konfigurasi Transaksi Otomatis
+     - Pengaturan transaksi rutin seperti gaji bulanan, sewa kontrakan, atau langganan bulanan.
+     - Pilihan Frekuensi: Harian (Daily), Mingguan (Weekly), Bulanan (Monthly), dan Tahunan (Yearly).
+
+6.2. Auto-Execution Background Job & Manual Trigger
+     - Otomatisasi Server Startup: Sistem Go backend memproses transaksi rutin yang sudah jatuh tempo 
+       secara otomatis saat server dinyalakan.
+     - Manual "Process Now": Fitur eksekusi manual via tombol di halaman UI jika pengguna ingin 
+       memproses transaksi rutin hari ini secara langsung.
+     - Otomatis menaikkan periode berikutnya (next_date) dan menonaktifkan transaksi jika sudah mencapai end_date.
+
+
+--------------------------------------------------------------------------------
+[MODUL 7] INSIGHT VISUAL DAN ANALISIS GRAFIK (INSIGHT CHARTS)
+--------------------------------------------------------------------------------
+7.1. Dashboard Utama (Financial Executive Summary)
+     - Card Stat Ringkasan: Total Saldo Saat Ini, Total Pemasukan Bulan Ini, Total Pengeluaran Bulan Ini, dan Total Anggaran.
+     - Grafik Arus Kas Mini (Cashflow Quick View) dan Widget Transaksi Terakhir.
+
+7.2. Visualisasi Grafik Interaktif (Recharts Engine)
+     - Tren Keuangan Tahunan (Composed Chart): Membandingkan grafik batang pemasukan vs pengeluaran dari bulan ke bulan.
+     - Area Chart Arus Kas (Cash Flow Trend): Menampilkan akumulasi laju kas keluar dan masuk.
+     - Visualisasi Rasio Pengeluaran Dual-Axis: Memantau proporsi belanja harian.
+     - Bar Chart Horizontal (Top Categories): Menampilkan 5 kategori pengeluaran terbesar.
+     - Radar Chart & Pie Chart: Memvisualisasikan distribusi persentase pengalokasian dana secara intuitif.
+
+
+--------------------------------------------------------------------------------
+[MODUL 8] TABULASI DATA & ANALISIS DETIL (INSIGHT TABLES)
+--------------------------------------------------------------------------------
+8.1. Rincian Pengeluaran per Kategori & Sparkline Mingguan
+     - Tabel breakdown per kategori yang dilengkapi dengan mini grafik tren mingguan (Weekly Sparklines).
+
+8.2. Rekapitulasi Mutasi & Ringkasan Harian (Daily Balance Summary)
+     - Tabel rekapitulasi mutasi harian yang menghitung Saldo Berjalan (Running Balance) dari waktu ke waktu.
+     - Ekspor data tabel dan kemudahan analisis statistik finansial.
+
+
+--------------------------------------------------------------------------------
+[MODUL 9] INTELLIGENT AI & MACHINE LEARNING INSIGHTS (ML MICROSERVICE)
+--------------------------------------------------------------------------------
+9.1. Klasifikasi Kategori Berbasis NLP (Text Categorization)
+     - Model Machine Learning menganalisis teks deskripsi transaksi menggunakan metode 
+       TF-IDF (Term Frequency-Inverse Document Frequency) & Naive Bayes/Logistic Regression.
+     - Mempercepat input transaksi bagi pengguna secara otomatis.
+
+9.2. Proyeksi Keuangan Masa Depan (Financial Forecasting)
+     - Algoritma Time-Series Trend Analysis memproyeksikan estimasi Pemasukan, Pengeluaran, 
+       serta Saldo Bersih untuk 1 hingga 6 bulan ke depan berdasarkan pola histori transaksi.
+
+9.3. Pelatihan Ulang Model (Model Retraining Endpoint)
+     - Memungkinkan model ML dilatih ulang (re-train) secara berkala menggunakan data transaksi 
+       terbaru pengguna agar tingkat akurasi prediksi terus meningkat.
+
+
+--------------------------------------------------------------------------------
+[MODUL 10] ANALISIS LANJUTAN & SKOR KESEHATAN KEUANGAN (ADVANCED ANALYTICS)
+--------------------------------------------------------------------------------
+10.1. Skor Kesehatan Keuangan (Financial Health Score 0 - 100)
+      - Algoritma penilaian kondisi finansial pengguna yang menghitung indikator:
+        * Savings Ratio (Persentase uang yang ditabung dari total pendapatan)
+        * Expense Ratio (Persentase gaya hidup/pengeluaran dari total pendapatan)
+        * Budget Adherence (Tingkat kedisiplinan mematuhi batas anggaran)
+      - Memberikan predikat kesehatan (Sangat Sehat, Sehat, Waspada, Bahaya) beserta rekomendasi aksi perbaikan.
+
+10.2. Deteksi Anomali Transaksi (Transaction Anomaly Detection)
+      - Fitur kecerdasan buatan yang secara otomatis menandai (flag) transaksi pengeluaran 
+        yang jumlahnya jauh melebihi rata-rata kebiasaan pengguna sebagai transaksi mencurigakan/anomali.
+
+10.3. Analisis Kebiasaan Belanja (Spending Habits Breakdown)
+      - Memberikan saran kontekstual mengenai penghematan pada kategori-kategori tertentu.
+
+
+--------------------------------------------------------------------------------
+[MODUL 11] LAPORAN KEUANGAN & EKSPOR DATA (REPORTS & EXPORT)
+--------------------------------------------------------------------------------
+11.1. Generasi Laporan Keuangan Periode Kustom
+      - Pembuatan ringkasan laporan keuangan bulanan maupun tahunan secara sistematis.
+
+11.2. Ekspor Laporan Multi-Format (PDF, Excel, CSV)
+      - Fitur mengunduh laporan keuangan dalam bentuk dokumen PDF formal.
+      - Fitur mengunduh raw data transaksi dalam format Spreadsheet Excel (.xlsx) dan CSV untuk kebutuhan audit atau pembukuan internal.
+
+
+--------------------------------------------------------------------------------
+[MODUL 12] ANTARMUKA PENGGUNA & PENGALAMAN PENGGUNA (UI/UX DESIGN)
+--------------------------------------------------------------------------------
+12.1. Desain Responsif Lintas Perangkat (Responsive Layout)
+      - Desktop Layout: Navigasi samping (Fixed Sidebar Navigation 256px) dengan tampilan dashboard luas.
+      - Mobile Layout: Navigasi bawah 5 tab (Bottom Navigation Bar) yang dilengkapi 
+        dropdown popup interaktif untuk menghemat ruang layar smartphone.
+
+12.2. Dukungan Mode Gelap / Terang (Dark Mode / Light Mode)
+      - Peralihan tema tampilan (Theme Toggle) yang nyaman di mata.
+      - State tema tersimpan secara permanen di LocalStorage browser pengguna.
+
+
+--------------------------------------------------------------------------------
+4. MANFAAT DAN VALUASI SISTEM DALAM LAPORAN PKL
+--------------------------------------------------------------------------------
+1. Otomatisasi Pembukuan: Mengurangi kesalahan pencatatan manual (human error) pada UMKM maupun individu.
+2. Efisiensi Pengambilan Keputusan: Menyediakan grafik dan proyeksi ML untuk membantu pengguna membuat keputusan finansial yang tepat.
+3. Keamanan Data Terjamin: Penerapan arsitektur JWT dan Enkripsi Password standar industri.
+4. Skalabilitas Tinggi: Penggunaan Bahasa Go dan Python FastAPI memastikan performa tinggi dan penggunaan resource memori yang efisien.
+
+================================================================================
+                    DOKUMEN INI SIAP DIGUNAKAN UNTUK
+                   DRAFT / LAMPIRAN LAPORAN PKL FINANSIAL
+================================================================================

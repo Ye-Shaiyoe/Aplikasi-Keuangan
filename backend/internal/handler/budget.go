@@ -79,3 +79,51 @@ func GetBudgetSummary(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, summary)
 }
+
+func GetBudgetAlerts(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	month, _ := strconv.Atoi(c.Query("month"))
+	year, _ := strconv.Atoi(c.Query("year"))
+	threshold, _ := strconv.Atoi(c.Query("threshold"))
+
+	if month < 1 || month > 12 {
+		month = int(time.Now().Month())
+	}
+	if year < 2000 {
+		year = time.Now().Year()
+	}
+	if threshold < 1 {
+		threshold = 80
+	}
+
+	alerts, err := service.AlertBudgetOverspend(userID, month, year, threshold)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, alerts)
+}
+
+func CopyBudgetsFromLastMonth(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	month, _ := strconv.Atoi(c.Query("month"))
+	year, _ := strconv.Atoi(c.Query("year"))
+
+	if month < 1 || month > 12 {
+		month = int(time.Now().Month())
+	}
+	if year < 2000 {
+		year = time.Now().Year()
+	}
+
+	copied, err := service.CopyBudgetsFromLastMonth(userID, month, year)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.CopyBudgetResponse{
+		Copied:  copied,
+		Message: "anggaran bulan lalu berhasil disalin",
+	})
+}

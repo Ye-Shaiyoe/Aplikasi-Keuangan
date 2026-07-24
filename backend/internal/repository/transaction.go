@@ -152,6 +152,56 @@ func DeleteTransaction(id, userID int) error {
 	return nil
 }
 
+// GetAllTransactionDates returns all distinct transaction dates for a user sorted
+// ascending. Used to calculate consecutive-day streaks.
+func GetAllTransactionDates(userID int) ([]string, error) {
+	rows, err := database.Pool.Query(context.Background(),
+		`SELECT DISTINCT date::text FROM transactions WHERE user_id = $1 ORDER BY date ASC`,
+		userID)
+	if err != nil {
+		return nil, fmt.Errorf("get transaction dates: %w", err)
+	}
+	defer rows.Close()
+
+	var dates []string
+	for rows.Next() {
+		var d string
+		if err := rows.Scan(&d); err != nil {
+			return nil, err
+		}
+		dates = append(dates, d)
+	}
+	return dates, nil
+}
+
+// BulkDeleteTransactions deletes transactions by IDs that belong to userID.
+// It returns the number of rows actually deleted.
+func BulkDeleteTransactions(userID int, ids []int) (int, error) {
+	if len(ids) == 0 {
+		return 0, nil
+	}
+
+	// Build parameterised IN clause: ($2,$3,...)
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids)+1)
+	args[0] = userID
+	for i, id := range ids {
+		placeholders[i] = fmt.Sprintf("$%d", i+2)
+		args[i+1] = id
+	}
+
+	query := fmt.Sprintf(
+		"DELETE FROM transactions WHERE user_id = $1 AND id IN (%s)",
+		strings.Join(placeholders, ","),
+	)
+
+	tag, err := database.Pool.Exec(context.Background(), query, args...)
+	if err != nil {
+		return 0, fmt.Errorf("bulk delete transactions: %w", err)
+	}
+	return int(tag.RowsAffected()), nil
+}
+
 func GetSummary(userID, month, year int) (*model.SummaryResponse, error) {
 	query := `
 		SELECT

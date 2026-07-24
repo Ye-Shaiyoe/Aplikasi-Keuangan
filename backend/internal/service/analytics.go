@@ -179,3 +179,82 @@ func GetAdvancedAnalytics(userID int) (*model.AdvancedAnalyticsResponse, error) 
 		MonthlyMetrics:  monthlyMetrics,
 	}, nil
 }
+
+// GetExpenseHeatmap retrieves daily expense totals for a full calendar year and
+// assigns spending intensity levels (0-4) for calendar heatmap display.
+func GetExpenseHeatmap(userID, year int) (*model.ExpenseHeatmapResponse, error) {
+	if year <= 0 {
+		year = time.Now().Year()
+	}
+
+	days, err := repository.GetDailyExpenses(userID, year)
+	if err != nil {
+		return nil, fmt.Errorf("heatmap service: %w", err)
+	}
+
+	var maxAmount int64
+	for _, d := range days {
+		if d.Amount > maxAmount {
+			maxAmount = d.Amount
+		}
+	}
+
+	// Calculate intensity level (0-4) based on maxAmount
+	for i := range days {
+		if days[i].Amount == 0 || maxAmount == 0 {
+			days[i].Level = 0
+		} else {
+			pct := float64(days[i].Amount) / float64(maxAmount)
+			switch {
+			case pct <= 0.25:
+				days[i].Level = 1
+			case pct <= 0.50:
+				days[i].Level = 2
+			case pct <= 0.75:
+				days[i].Level = 3
+			default:
+				days[i].Level = 4
+			}
+		}
+	}
+
+	if days == nil {
+		days = []model.HeatmapDay{}
+	}
+
+	return &model.ExpenseHeatmapResponse{
+		Year:      year,
+		MaxAmount: maxAmount,
+		Days:      days,
+	}, nil
+}
+
+// GetNetWorthTimeline computes cumulative balance over past months (default 12)
+// to render net worth trajectory chart.
+func GetNetWorthTimeline(userID, limitMonths int) (*model.NetWorthTimelineResponse, error) {
+	if limitMonths <= 0 {
+		limitMonths = 12
+	}
+
+	rawPoints, err := repository.GetNetWorthPoints(userID, limitMonths)
+	if err != nil {
+		return nil, fmt.Errorf("net worth service: %w", err)
+	}
+
+	var cumulative int64
+	for i := range rawPoints {
+		netMonth := rawPoints[i].MonthlyIncome - rawPoints[i].MonthlyExpense
+		cumulative += netMonth
+		rawPoints[i].CumulativeBalance = cumulative
+	}
+
+	if rawPoints == nil {
+		rawPoints = []model.NetWorthPoint{}
+	}
+
+	return &model.NetWorthTimelineResponse{
+		Points:         rawPoints,
+		CurrentBalance: cumulative,
+		TotalMonths:    len(rawPoints),
+	}, nil
+}

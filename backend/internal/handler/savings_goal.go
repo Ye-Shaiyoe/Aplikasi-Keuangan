@@ -135,3 +135,35 @@ func WithdrawFromSavingsGoal(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, goal)
 }
+
+func GetSavingsProjection(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	projection, err := service.GetSavingsProjection(userID, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, projection)
+}
+
+func AutoAllocateSavings(c *gin.Context) {
+	userID := middleware.GetUserID(c)
+	var req model.SavingsGoalDeposit
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := service.AutoAllocateSavings(userID, req.Amount)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}

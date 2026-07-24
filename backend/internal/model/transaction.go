@@ -85,3 +85,22 @@ type CategoryTrendResponse struct {
 	Year       int                   `json:"year"`
 	Categories []CategoryWeeklyTrend `json:"categories"`
 }
+
+// BulkDeleteRequest is sent by the client to delete multiple transactions at once.
+type BulkDeleteRequest struct {
+	IDs []int `json:"ids" binding:"required,min=1"`
+}
+
+// BulkDeleteResponse reports how many rows were actually deleted.
+type BulkDeleteResponse struct {
+	Deleted int    `json:"deleted"`
+	Message string `json:"message"`
+}
+
+// SpendingStreakResponse represents the current consecutive-day input streak.
+type SpendingStreakResponse struct {
+	CurrentStreak int    `json:"current_streak"` // days in the current streak
+	LongestStreak int    `json:"longest_streak"` // all-time longest streak
+	LastActiveDay string `json:"last_active_day"` // YYYY-MM-DD of the last day with a transaction
+	IsActiveToday bool   `json:"is_active_today"`
+}

@@ -140,3 +140,69 @@ func GetTopExpenses(userID, month, year int) ([]CategorySpending, error) {
 	}
 	return spendings, nil
 }
+
+// GetDailyExpenses returns aggregated expense totals per calendar day for a
+// given year. Used to build the expense heatmap.
+func GetDailyExpenses(userID, year int) ([]model.HeatmapDay, error) {
+	rows, err := database.Pool.Query(context.Background(),
+		`SELECT
+			date::text,
+			COALESCE(SUM(amount), 0) AS total,
+			COUNT(*) AS cnt
+		FROM transactions
+		WHERE user_id = $1
+		  AND EXTRACT(YEAR FROM date) = $2
+		  AND type = 'expense'
+		GROUP BY date
+		ORDER BY date ASC`,
+		userID, year)
+	if err != nil {
+		return nil, fmt.Errorf("daily expenses: %w", err)
+	}
+	defer rows.Close()
+
+	var days []model.HeatmapDay
+	for rows.Next() {
+		var d model.HeatmapDay
+		if err := rows.Scan(&d.Date, &d.Amount, &d.Count); err != nil {
+			return nil, err
+		}
+		days = append(days, d)
+	}
+	return days, nil
+}
+
+// GetNetWorthPoints returns month-by-month income and expense totals for the
+// past limitMonths. Callers accumulate these to build a net-worth timeline.
+func GetNetWorthPoints(userID, limitMonths int) ([]model.NetWorthPoint, error) {
+	query := fmt.Sprintf(`
+		SELECT
+			EXTRACT(YEAR FROM date)::int  AS y,
+			EXTRACT(MONTH FROM date)::int AS m,
+			COALESCE(SUM(CASE WHEN type = 'income'  THEN amount ELSE 0 END), 0) AS income,
+			COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS expense
+		FROM transactions
+		WHERE user_id = $1
+		  AND date >= date_trunc('month', NOW() - INTERVAL '%d month')
+		GROUP BY y, m
+		ORDER BY y ASC, m ASC
+	`, limitMonths-1)
+
+	rows, err := database.Pool.Query(context.Background(), query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("net worth points: %w", err)
+	}
+	defer rows.Close()
+
+	monthNames := []string{"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"}
+	var points []model.NetWorthPoint
+	for rows.Next() {
+		var p model.NetWorthPoint
+		if err := rows.Scan(&p.Year, &p.Month, &p.MonthlyIncome, &p.MonthlyExpense); err != nil {
+			return nil, err
+		}
+		p.MonthName = fmt.Sprintf("%s %d", monthNames[p.Month], p.Year)
+		points = append(points, p)
+	}
+	return points, nil
+}
